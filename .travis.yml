@@ -1,11 +1,26 @@
+# language travis will use
 language: python
+# version of python. Not too important as the real python
+# code will be run in the docker container and hence there
+# is where the real python version resides
 python:
   - "3.6"
 
+# The services travis will run
+# in this case all the only one we are interested is docker
+# then in docker we have whatever services we want
 services:
   - docker
 
+# script travis will run before any of the automation we ask
+# travis to run.
+# we need to install docker-compose b4 anything runs
 before_script: pip install docker-compose
 
+# now we run the script we want travis to run, that will happen
+# in the docker
+# we send the command to the docker via the docker-compose tool
+# this means that flake8 the linting tool must be part of the
+# requirements.txt file
 script:
   - docker-compose run app sh -c "python manage.py test && flake8"
