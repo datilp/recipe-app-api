@@ -18,5 +18,9 @@ from django.urls import include, path
 
 urlpatterns = [
     path('polls/', include('polls.urls')),
-    path('admin/', admin.site.urls)
+    path('admin/', admin.site.urls),
+    # so any request that comes in the form of 'api/user/' gets passed to
+    # user.urls if the url is 'api/user/create' the 'create' will be matched
+    # in user.urls and passed to the view
+    path('api/user/', include('user.urls')),
 ]
