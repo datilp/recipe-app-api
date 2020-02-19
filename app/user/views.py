@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, authentication, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
 
@@ -22,3 +22,24 @@ class CreateTokenView(ObtainAuthToken):
     serializer_class = AuthTokenSerializer
     # sets the renderer so we can use the this view in the HTML/browser
     renderer_classes = api_settings.DEFAULT_RENDERER_CLASSES
+
+
+# note we are basing this on the RetrieveUpdateAPIView which already provides
+# a bunch of functionality
+class ManageUserView(generics.RetrieveUpdateAPIView):
+    """Manage the authenticated user"""
+    serializer_class = UserSerializer  # serializer class attribute
+    # the authentication class type is going to be token base
+    authentication_classes = (authentication.TokenAuthentication,)
+    # the permissions are going to be just that it is authenticated
+    permission_classes = (permissions.IsAuthenticated,)
+
+    # with a view since it is linked to a model it will return the database
+    # object corresponding to that model.
+    # In this case we just want to return the user, so we override the
+    # get_object method to do just that.
+    def get_object(self):
+        """Retrieve and return authentication user"""
+        # the authentication_classes will make sure to attach to the request
+        # the authenticated user. It is done automatically.
+        return self.request.user
